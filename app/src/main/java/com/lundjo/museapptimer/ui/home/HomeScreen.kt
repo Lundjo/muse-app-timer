@@ -1,6 +1,7 @@
 package com.lundjo.museapptimer.ui.home
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -67,19 +68,28 @@ fun HomeScreen(
             MenuCard(
                 icon = Icons.Outlined.Apps,
                 contentDescription = "Bundles",
-                modifier = Modifier.weight(1f).height(160.dp)
+                modifier = Modifier
+                    .weight(1f)
+                    .height(160.dp)
+                    .clickable { onBundlesClick() }
             )
             MenuCard(
                 icon = Icons.Outlined.AccessTime,
                 contentDescription = "Time and Bundles",
-                modifier = Modifier.weight(1f).height(160.dp)
+                modifier = Modifier
+                    .weight(1f)
+                    .height(160.dp)
+                    .clickable { onScheduleClick() }
             )
         }
         Spacer(modifier = Modifier.height(16.dp))
         MenuCard(
             icon = Icons.Outlined.Settings,
             contentDescription = "Settings",
-            modifier = Modifier.fillMaxWidth().height(180.dp)
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(180.dp)
+                .clickable { onSettingsClick() }
         )
     }
 }
