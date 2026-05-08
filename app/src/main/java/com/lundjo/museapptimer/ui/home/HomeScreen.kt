@@ -77,7 +77,7 @@ fun HomeScreen(
             )
             MenuCard(
                 icon = Icons.Outlined.AccessTime,
-                contentDescription = "Time and Bundles",
+                contentDescription = "Time & Bundles",
                 modifier = Modifier
                     .weight(1f)
                     .height(160.dp)

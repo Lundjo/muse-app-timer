@@ -71,7 +71,7 @@ fun CreateBundleScreen() {
             modifier = Modifier.fillMaxWidth(),
             shape = RoundedCornerShape(16.dp)
         ) {
-            Text("Create Bundle (0 apps)")
+            Text("Create Bundle")
         }
     }
 }
