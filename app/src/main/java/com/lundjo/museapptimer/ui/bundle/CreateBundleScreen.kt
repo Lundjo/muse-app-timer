@@ -31,6 +31,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
+import com.lundjo.museapptimer.data.model.Bundle
 
 @Composable
 fun CreateBundleScreen(viewModel: BundleViewModel) {
@@ -67,7 +68,12 @@ fun CreateBundleScreen(viewModel: BundleViewModel) {
         }
         Spacer(modifier = Modifier.height(16.dp))
         Button(
-            onClick = { },
+            onClick = {
+                if (bundleName.isNotBlank()) {
+                    viewModel.insertBundle(Bundle(name = bundleName))
+                    bundleName = ""
+                }
+            },
             modifier = Modifier.fillMaxWidth(),
             shape = RoundedCornerShape(16.dp)
         ) {
