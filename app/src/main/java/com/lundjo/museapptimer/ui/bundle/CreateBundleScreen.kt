@@ -33,7 +33,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
 
 @Composable
-fun CreateBundleScreen() {
+fun CreateBundleScreen(viewModel: BundleViewModel) {
     var bundleName by remember { mutableStateOf("") }
 
     Column(
