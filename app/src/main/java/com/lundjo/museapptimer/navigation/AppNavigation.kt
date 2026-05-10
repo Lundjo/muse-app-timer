@@ -14,13 +14,15 @@ import com.lundjo.museapptimer.ui.schedule.TimeAndBundlesScreen
 import com.lundjo.museapptimer.ui.schedule.TimeAndBundlesViewModel
 import com.lundjo.museapptimer.ui.settings.SettingsScreen
 import androidx.compose.ui.platform.LocalContext
+import com.lundjo.museapptimer.ui.settings.SettingsViewModel
+
 
 @Composable
 fun AppNavigation() {
     val navController = rememberNavController()
     val context = LocalContext.current
     val app = context.applicationContext as MuseApp
-    val factory = ViewModelFactory(app.repository)
+    val factory = ViewModelFactory(app.repository, app.settingsDataStore)
 
     NavHost(navController = navController, startDestination = "home") {
         composable("home") {
@@ -39,7 +41,8 @@ fun AppNavigation() {
             TimeAndBundlesScreen(viewModel = viewModel)
         }
         composable("settings") {
-            SettingsScreen()
+            val viewModel: SettingsViewModel = viewModel(factory = factory)
+            SettingsScreen(viewModel = viewModel)
         }
     }
 }

@@ -20,6 +20,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -30,7 +31,11 @@ import androidx.compose.ui.unit.dp
 
 @Composable
 @OptIn(ExperimentalMaterial3Api::class)
-fun SettingsScreen() {
+fun SettingsScreen(viewModel: SettingsViewModel) {
+    val editingHour by viewModel.editingHour.collectAsState()
+    var selectedHour by remember(editingHour) { mutableStateOf("%02d:00".format(editingHour)) }
+    var expanded by remember { mutableStateOf(false) }
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -70,10 +75,6 @@ fun SettingsScreen() {
                 color = MaterialTheme.colorScheme.onSurface
             )
             Spacer(modifier = Modifier.height(8.dp))
-
-            var selectedHour by remember { mutableStateOf("19:00") }
-            var expanded by remember { mutableStateOf(false) }
-
             ExposedDropdownMenuBox(
                 expanded = expanded,
                 onExpandedChange = { expanded = it }
@@ -106,7 +107,10 @@ fun SettingsScreen() {
         }
         Spacer(modifier = Modifier.height(16.dp))
         Button(
-            onClick = { },
+            onClick = {
+                val hour = selectedHour.removeSuffix(":00").toInt()
+                viewModel.saveEditingHour(hour)
+            },
             modifier = Modifier.fillMaxWidth(),
             shape = RoundedCornerShape(16.dp)
         ) {
