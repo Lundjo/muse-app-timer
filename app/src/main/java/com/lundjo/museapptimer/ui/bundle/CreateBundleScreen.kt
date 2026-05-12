@@ -30,12 +30,16 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
+import com.lundjo.museapptimer.data.getInstalledApps
 import com.lundjo.museapptimer.data.model.Bundle
 
 @Composable
 fun CreateBundleScreen(viewModel: BundleViewModel) {
     var bundleName by remember { mutableStateOf("") }
+    val context = LocalContext.current
+    val installedApps = remember { getInstalledApps(context) }
 
     Column(
         modifier = Modifier
@@ -64,7 +68,9 @@ fun CreateBundleScreen(viewModel: BundleViewModel) {
             verticalArrangement = Arrangement.spacedBy(12.dp),
             modifier = Modifier.weight(1f)
         ) {
-
+            items(installedApps) { app ->
+                AppGridItem(name = app.displayName)
+            }
         }
         Spacer(modifier = Modifier.height(16.dp))
         Button(
