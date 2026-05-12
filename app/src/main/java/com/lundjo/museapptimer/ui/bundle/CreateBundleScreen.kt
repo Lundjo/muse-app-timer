@@ -26,6 +26,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.getValue
@@ -46,6 +47,10 @@ fun CreateBundleScreen(viewModel: BundleViewModel) {
     val context = LocalContext.current
     val installedApps = remember { getInstalledApps(context) }
     var selectedApps by remember { mutableStateOf(setOf<String>()) }
+    val bundles by viewModel.bundles.collectAsState()
+    val isButtonEnabled = bundleName.isNotBlank() &&
+            selectedApps.isNotEmpty() &&
+            bundles.none { it.name == bundleName }
 
     Column(
         modifier = Modifier
@@ -98,6 +103,7 @@ fun CreateBundleScreen(viewModel: BundleViewModel) {
                     selectedApps = emptySet()
                 }
             },
+            enabled = isButtonEnabled,
             modifier = Modifier.fillMaxWidth(),
             shape = RoundedCornerShape(16.dp)
         ) {
