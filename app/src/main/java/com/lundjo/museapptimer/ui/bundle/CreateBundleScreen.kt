@@ -1,5 +1,6 @@
 package com.lundjo.museapptimer.ui.bundle
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -32,6 +33,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
+import coil.compose.rememberAsyncImagePainter
 import com.lundjo.museapptimer.data.getInstalledApps
 import com.lundjo.museapptimer.data.model.Bundle
 
@@ -69,7 +71,10 @@ fun CreateBundleScreen(viewModel: BundleViewModel) {
             modifier = Modifier.weight(1f)
         ) {
             items(installedApps) { app ->
-                AppGridItem(name = app.displayName)
+                AppGridItem(
+                    name = app.displayName,
+                    packageName = app.packageName
+                )
             }
         }
         Spacer(modifier = Modifier.height(16.dp))
@@ -89,7 +94,16 @@ fun CreateBundleScreen(viewModel: BundleViewModel) {
 }
 
 @Composable
-private fun AppGridItem(name: String) {
+private fun AppGridItem(name: String, packageName: String) {
+    val context = LocalContext.current
+    val icon = remember(packageName) {
+        try {
+            context.packageManager.getApplicationIcon(packageName)
+        } catch (e: Exception) {
+            null
+        }
+    }
+
     Column(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
@@ -100,12 +114,20 @@ private fun AppGridItem(name: String) {
                 .background(MaterialTheme.colorScheme.surface),
             contentAlignment = Alignment.Center
         ) {
-            Icon(
-                imageVector = Icons.Outlined.Android,
-                contentDescription = name,
-                tint = MaterialTheme.colorScheme.onSurface,
-                modifier = Modifier.size(36.dp)
-            )
+            if (icon != null) {
+                Image(
+                    painter = rememberAsyncImagePainter(icon),
+                    contentDescription = name,
+                    modifier = Modifier.size(56.dp)
+                )
+            } else {
+                Icon(
+                    imageVector = Icons.Outlined.Android,
+                    contentDescription = name,
+                    tint = MaterialTheme.colorScheme.onSurface,
+                    modifier = Modifier.size(36.dp)
+                )
+            }
         }
         Spacer(modifier = Modifier.height(4.dp))
         Text(
