@@ -17,4 +17,7 @@ interface AppDao {
 
     @Delete
     suspend fun delete(app: App)
+
+    @Query("SELECT packageName FROM apps")
+    fun getBundledPackageNames(): Flow<List<String>>
 }

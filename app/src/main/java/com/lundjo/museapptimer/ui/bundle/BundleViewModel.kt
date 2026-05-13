@@ -18,11 +18,12 @@ class BundleViewModel(private val repository: BundleRepository) : ViewModel() {
             initialValue = emptyList()
         )
 
-    fun insertBundle(bundle: Bundle) {
-        viewModelScope.launch {
-            repository.insertBundle(bundle)
-        }
-    }
+    val bundledPackageNames = repository.getBundledPackageNames()
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5000),
+            initialValue = emptyList()
+        )
 
     fun deleteBundle(bundle: Bundle) {
         viewModelScope.launch {

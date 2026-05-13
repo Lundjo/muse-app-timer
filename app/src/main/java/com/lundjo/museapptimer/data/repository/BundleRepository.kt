@@ -11,10 +11,6 @@ class BundleRepository(private val database: AppDatabase) {
         return database.bundleDao().getAll()
     }
 
-    suspend fun insertBundle(bundle: Bundle) {
-        database.bundleDao().insert(bundle)
-    }
-
     suspend fun deleteBundle(bundle: Bundle) {
         database.bundleDao().delete(bundle)
     }
@@ -25,5 +21,9 @@ class BundleRepository(private val database: AppDatabase) {
 
     suspend fun insertBundleAndGetId(bundle: Bundle): Long {
         return database.bundleDao().insertAndGetId(bundle)
+    }
+
+    fun getBundledPackageNames(): Flow<List<String>> {
+        return database.appDao().getBundledPackageNames()
     }
 }

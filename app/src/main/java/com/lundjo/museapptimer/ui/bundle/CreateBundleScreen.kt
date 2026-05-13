@@ -48,6 +48,10 @@ fun CreateBundleScreen(viewModel: BundleViewModel) {
     val installedApps = remember { getInstalledApps(context) }
     var selectedApps by remember { mutableStateOf(setOf<String>()) }
     val bundles by viewModel.bundles.collectAsState()
+    val bundledPackageNames by viewModel.bundledPackageNames.collectAsState()
+    val availableApps = installedApps.filter {
+        !bundledPackageNames.contains(it.packageName)
+    }
     val isButtonEnabled = bundleName.isNotBlank() &&
             selectedApps.isNotEmpty() &&
             bundles.none { it.name == bundleName }
@@ -79,7 +83,7 @@ fun CreateBundleScreen(viewModel: BundleViewModel) {
             verticalArrangement = Arrangement.spacedBy(12.dp),
             modifier = Modifier.weight(1f)
         ) {
-            items(installedApps) { app ->
+            items(availableApps) { app ->
                 AppGridItem(
                     name = app.displayName,
                     packageName = app.packageName,
