@@ -17,4 +17,7 @@ interface BundleDao {
 
     @Delete
     suspend fun delete(bundle: Bundle)
+
+    @Insert
+    suspend fun insertAndGetId(bundle: Bundle): Long
 }

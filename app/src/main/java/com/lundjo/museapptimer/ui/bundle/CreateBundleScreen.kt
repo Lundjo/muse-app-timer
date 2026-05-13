@@ -97,11 +97,9 @@ fun CreateBundleScreen(viewModel: BundleViewModel) {
         Spacer(modifier = Modifier.height(16.dp))
         Button(
             onClick = {
-                if (bundleName.isNotBlank() && selectedApps.isNotEmpty()) {
-                    viewModel.insertBundle(Bundle(name = bundleName))
-                    bundleName = ""
-                    selectedApps = emptySet()
-                }
+                viewModel.createBundle(bundleName, selectedApps, installedApps)
+                bundleName = ""
+                selectedApps = emptySet()
             },
             enabled = isButtonEnabled,
             modifier = Modifier.fillMaxWidth(),
