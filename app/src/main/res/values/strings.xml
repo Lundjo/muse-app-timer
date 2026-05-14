@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">Muse App Timer</string>
+    <string name="accessibility_service_description">Muse App Timer uses accessibility service to block apps based on your schedule.</string>
 </resources>
