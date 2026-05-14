@@ -17,6 +17,8 @@ import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExposedDropdownMenuAnchorType
@@ -42,13 +44,20 @@ import coil.compose.rememberAsyncImagePainter
 @Composable
 fun BundleDetailScreen(
     bundleId: Int,
-    viewModel: TimeAndBundlesViewModel
+    viewModel: TimeAndBundlesViewModel,
+    onBack: () -> Unit
 ) {
     val bundles by viewModel.bundles.collectAsState()
     val bundle = bundles.find { it.id == bundleId } ?: return
     val apps by viewModel.getAppsForBundle(bundleId).collectAsState(initial = emptyList())
-    var startTime by remember { mutableStateOf("09:00") }
-    var endTime by remember { mutableStateOf("17:00") }
+    val schedules by viewModel.getSchedulesForBundle(bundleId).collectAsState(initial = emptyList())
+    val existingSchedule = schedules.firstOrNull()
+    var startTime by remember(existingSchedule) {
+        mutableStateOf(existingSchedule?.startTime ?: "09:00")
+    }
+    var endTime by remember(existingSchedule) {
+        mutableStateOf(existingSchedule?.endTime ?: "17:00")
+    }
 
     Column(
         modifier = Modifier
@@ -111,6 +120,27 @@ fun BundleDetailScreen(
         TimePickerCard(title = "Block from", time = startTime, onTimeChange = { startTime = it })
         Spacer(modifier = Modifier.height(8.dp))
         TimePickerCard(title = "Block until", time = endTime, onTimeChange = { endTime = it })
+        Spacer(modifier = Modifier.height(16.dp))
+        Button(
+            onClick = {
+                viewModel.saveSchedule(bundleId, startTime, endTime)
+            },
+            modifier = Modifier.fillMaxWidth(),
+            shape = RoundedCornerShape(16.dp)
+        ) {
+            Text("Save Block Schedule")
+        }
+        Spacer(modifier = Modifier.height(8.dp))
+        Button(
+            onClick = {
+                viewModel.deleteBundle(bundle)
+                onBack()
+            },
+            modifier = Modifier.fillMaxWidth(),
+            shape = RoundedCornerShape(16.dp)
+        ) {
+            Text("Delete Bundle")
+        }
     }
 }
 

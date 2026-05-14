@@ -51,7 +51,11 @@ fun AppNavigation() {
         composable("bundleDetail/{bundleId}") { backStackEntry ->
             val bundleId = backStackEntry.arguments?.getString("bundleId")?.toInt() ?: return@composable
             val viewModel: TimeAndBundlesViewModel = viewModel(factory = factory)
-            BundleDetailScreen(bundleId = bundleId, viewModel = viewModel)
+            BundleDetailScreen(
+                bundleId = bundleId,
+                viewModel = viewModel,
+                onBack = { navController.popBackStack() }
+            )
         }
     }
 }

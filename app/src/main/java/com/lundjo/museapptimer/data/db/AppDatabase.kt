@@ -8,7 +8,7 @@ import com.lundjo.museapptimer.data.model.Schedule
 
 @Database(
     entities = [Bundle::class, App::class, Schedule::class],
-    version = 1
+    version = 2
 )
 abstract class AppDatabase : RoomDatabase() {
     abstract fun bundleDao(): BundleDao

@@ -13,7 +13,9 @@ class MuseApp : Application() {
             applicationContext,
             AppDatabase::class.java,
             "muse_database"
-        ).build()
+        )
+            .fallbackToDestructiveMigration(false)
+            .build()
     }
 
     val repository by lazy {
