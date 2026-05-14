@@ -26,4 +26,8 @@ class BundleRepository(private val database: AppDatabase) {
     fun getBundledPackageNames(): Flow<List<String>> {
         return database.appDao().getBundledPackageNames()
     }
+
+    fun getAppsForBundle(bundleId: Int): Flow<List<App>> {
+        return database.appDao().getAppsForBundle(bundleId)
+    }
 }

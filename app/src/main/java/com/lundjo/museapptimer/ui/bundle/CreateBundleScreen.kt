@@ -1,6 +1,5 @@
 package com.lundjo.museapptimer.ui.bundle
 
-import android.R
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -39,7 +38,6 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import coil.compose.rememberAsyncImagePainter
 import com.lundjo.museapptimer.data.getInstalledApps
-import com.lundjo.museapptimer.data.model.Bundle
 
 @Composable
 fun CreateBundleScreen(viewModel: BundleViewModel) {
