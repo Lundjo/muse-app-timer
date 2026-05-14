@@ -33,7 +33,10 @@ import coil.compose.rememberAsyncImagePainter
 import com.lundjo.museapptimer.data.model.Bundle
 
 @Composable
-fun TimeAndBundlesScreen(viewModel: TimeAndBundlesViewModel) {
+fun TimeAndBundlesScreen(
+    viewModel: TimeAndBundlesViewModel,
+    onBundleClick: (Int) -> Unit
+) {
     val bundles by viewModel.bundles.collectAsState()
 
     Column(
@@ -70,7 +73,7 @@ fun TimeAndBundlesScreen(viewModel: TimeAndBundlesViewModel) {
                     BundleCard(
                         bundle = bundle,
                         viewModel = viewModel,
-                        onClick = { }
+                        onClick = { onBundleClick(bundle.id) }
                     )
                     Spacer(modifier = Modifier.height(12.dp))
                 }

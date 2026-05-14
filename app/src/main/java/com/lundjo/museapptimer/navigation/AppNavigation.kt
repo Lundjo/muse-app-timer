@@ -14,6 +14,7 @@ import com.lundjo.museapptimer.ui.schedule.TimeAndBundlesScreen
 import com.lundjo.museapptimer.ui.schedule.TimeAndBundlesViewModel
 import com.lundjo.museapptimer.ui.settings.SettingsScreen
 import androidx.compose.ui.platform.LocalContext
+import com.lundjo.museapptimer.ui.schedule.BundleDetailScreen
 import com.lundjo.museapptimer.ui.settings.SettingsViewModel
 
 
@@ -29,7 +30,7 @@ fun AppNavigation() {
             HomeScreen(
                 onBundlesClick = { navController.navigate("createBundle") },
                 onScheduleClick = { navController.navigate("schedule") },
-                onSettingsClick = { navController.navigate("settings") }
+                onSettingsClick = { navController.navigate("settings") },
             )
         }
         composable("createBundle") {
@@ -38,11 +39,19 @@ fun AppNavigation() {
         }
         composable("schedule") {
             val viewModel: TimeAndBundlesViewModel = viewModel(factory = factory)
-            TimeAndBundlesScreen(viewModel = viewModel)
+            TimeAndBundlesScreen(
+                viewModel = viewModel,
+                onBundleClick = { bundleId -> navController.navigate("bundleDetail/$bundleId") }
+            )
         }
         composable("settings") {
             val viewModel: SettingsViewModel = viewModel(factory = factory)
             SettingsScreen(viewModel = viewModel)
+        }
+        composable("bundleDetail/{bundleId}") { backStackEntry ->
+            val bundleId = backStackEntry.arguments?.getString("bundleId")?.toInt() ?: return@composable
+            val viewModel: TimeAndBundlesViewModel = viewModel(factory = factory)
+            BundleDetailScreen(bundleId = bundleId, viewModel = viewModel)
         }
     }
 }
