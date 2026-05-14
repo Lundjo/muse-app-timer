@@ -39,4 +39,8 @@ class BundleRepository(private val database: AppDatabase) {
     fun getSchedulesForBundle(bundleId: Int): Flow<List<Schedule>> {
         return database.scheduleDao().getSchedulesForBundle(bundleId)
     }
+
+    suspend fun updateSchedule(schedule: Schedule) {
+        database.scheduleDao().update(schedule)
+    }
 }

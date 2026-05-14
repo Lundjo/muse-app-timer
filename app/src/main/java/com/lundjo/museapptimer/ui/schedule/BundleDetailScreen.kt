@@ -2,9 +2,11 @@ package com.lundjo.museapptimer.ui.schedule
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -58,6 +60,14 @@ fun BundleDetailScreen(
     var endTime by remember(existingSchedule) {
         mutableStateOf(existingSchedule?.endTime ?: "17:00")
     }
+    val allDays = listOf("M", "T", "W", "T", "F", "S", "S")
+    val allDayKeys = listOf("MON", "TUE", "WED", "THU", "FRI", "SAT", "SUN")
+    var selectedDays by remember(existingSchedule) {
+        mutableStateOf(
+            existingSchedule?.daysOfWeek?.split(",")?.toSet() ?: allDayKeys.toSet()
+        )
+    }
+    val isSaveEnabled = selectedDays.isNotEmpty()
 
     Column(
         modifier = Modifier
@@ -121,12 +131,47 @@ fun BundleDetailScreen(
         Spacer(modifier = Modifier.height(8.dp))
         TimePickerCard(title = "Block until", time = endTime, onTimeChange = { endTime = it })
         Spacer(modifier = Modifier.height(16.dp))
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+            allDays.forEachIndexed { index, day ->
+                val dayKey = allDayKeys[index]
+                val isSelected = selectedDays.contains(dayKey)
+                Box(
+                    modifier = Modifier
+                        .size(40.dp)
+                        .clip(RoundedCornerShape(8.dp))
+                        .background(
+                            if (isSelected) MaterialTheme.colorScheme.onSurface
+                            else MaterialTheme.colorScheme.surface
+                        )
+                        .clickable {
+                            selectedDays = if (isSelected) {
+                                selectedDays - dayKey
+                            } else {
+                                selectedDays + dayKey
+                            }
+                        },
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text(
+                        text = day,
+                        color = if (isSelected) MaterialTheme.colorScheme.background
+                        else MaterialTheme.colorScheme.onSurface,
+                        style = MaterialTheme.typography.bodyMedium
+                    )
+                }
+            }
+        }
+        Spacer(modifier = Modifier.height(16.dp))
         Button(
             onClick = {
-                viewModel.saveSchedule(bundleId, startTime, endTime)
+                viewModel.saveSchedule(bundleId, startTime, endTime, selectedDays.joinToString(","))
             },
             modifier = Modifier.fillMaxWidth(),
-            shape = RoundedCornerShape(16.dp)
+            shape = RoundedCornerShape(16.dp),
+            enabled = isSaveEnabled
         ) {
             Text("Save Block Schedule")
         }

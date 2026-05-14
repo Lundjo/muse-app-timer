@@ -4,6 +4,7 @@ import androidx.room.Dao
 import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.Query
+import androidx.room.Update
 import com.lundjo.museapptimer.data.model.Schedule
 import kotlinx.coroutines.flow.Flow
 
@@ -17,4 +18,7 @@ interface ScheduleDao {
 
     @Delete
     suspend fun delete(schedule: Schedule)
+
+    @Update
+    suspend fun update(schedule: Schedule)
 }
