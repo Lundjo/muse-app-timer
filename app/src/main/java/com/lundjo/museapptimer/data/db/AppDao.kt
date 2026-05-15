@@ -20,4 +20,7 @@ interface AppDao {
 
     @Query("SELECT packageName FROM apps")
     fun getBundledPackageNames(): Flow<List<String>>
+
+    @Query("SELECT * FROM apps")
+    fun getAllApps(): Flow<List<App>>
 }
