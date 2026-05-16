@@ -25,4 +25,6 @@ class MuseApp : Application() {
     val settingsDataStore by lazy {
         SettingsDataStore(applicationContext)
     }
+
+    var isTimerShowing = false
 }
