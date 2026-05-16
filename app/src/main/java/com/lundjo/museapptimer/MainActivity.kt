@@ -7,34 +7,25 @@ import androidx.activity.SystemBarStyle
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import android.provider.Settings
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import com.lundjo.museapptimer.navigation.AppNavigation
 import com.lundjo.museapptimer.ui.theme.MuseAppTimerTheme
 import androidx.core.net.toUri
-import kotlinx.coroutines.delay
 
 class MainActivity : ComponentActivity() {
+
+    private val canDrawOverlays = mutableStateOf(false)
+    private val isUsageStatsGranted = mutableStateOf(false)
+    private val isAccessibilityEnabled = mutableStateOf(false)
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge(
             navigationBarStyle = SystemBarStyle.dark(android.graphics.Color.TRANSPARENT)
         )
-
         setContent {
             MuseAppTimerTheme {
-                var canDrawOverlays by remember { mutableStateOf(Settings.canDrawOverlays(this)) }
-
-                if (!canDrawOverlays) {
-                    LaunchedEffect(Unit) {
-                        while (!canDrawOverlays) {
-                            delay(500)
-                            canDrawOverlays = Settings.canDrawOverlays(this@MainActivity)
-                        }
-                    }
+                if (!canDrawOverlays.value) {
                     androidx.compose.material3.AlertDialog(
                         onDismissRequest = { },
                         title = { androidx.compose.material3.Text("Permission required") },
@@ -57,15 +48,7 @@ class MainActivity : ComponentActivity() {
                         }
                     )
                 }
-                var isUsageStatsGranted by remember { mutableStateOf(isUsageStatsPermissionGranted()) }
-
-                if (!isUsageStatsGranted) {
-                    LaunchedEffect(Unit) {
-                        while (!isUsageStatsGranted) {
-                            delay(500)
-                            isUsageStatsGranted = isUsageStatsPermissionGranted()
-                        }
-                    }
+                else if (!isUsageStatsGranted.value) {
                     androidx.compose.material3.AlertDialog(
                         onDismissRequest = { },
                         title = { androidx.compose.material3.Text("Permission required") },
@@ -85,9 +68,36 @@ class MainActivity : ComponentActivity() {
                         }
                     )
                 }
+                else if (!isAccessibilityEnabled.value) {
+                    androidx.compose.material3.AlertDialog(
+                        onDismissRequest = { },
+                        title = { androidx.compose.material3.Text("Permission required") },
+                        text = { androidx.compose.material3.Text("Muse App Timer needs accessibility permission to block apps. You will be redirected to Settings.") },
+                        confirmButton = {
+                            androidx.compose.material3.TextButton(onClick = {
+                                val intent = Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS)
+                                startActivity(intent)
+                            }) {
+                                androidx.compose.material3.Text("Continue")
+                            }
+                        },
+                        dismissButton = {
+                            androidx.compose.material3.TextButton(onClick = { finish() }) {
+                                androidx.compose.material3.Text("Cancel")
+                            }
+                        }
+                    )
+                }
                 AppNavigation()
             }
         }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        canDrawOverlays.value = Settings.canDrawOverlays(this)
+        isUsageStatsGranted.value = isUsageStatsPermissionGranted()
+        isAccessibilityEnabled.value = isAccessibilityServiceEnabled()
     }
 
     private fun isUsageStatsPermissionGranted(): Boolean {
@@ -98,5 +108,13 @@ class MainActivity : ComponentActivity() {
             packageName
         )
         return mode == android.app.AppOpsManager.MODE_ALLOWED
+    }
+
+    private fun isAccessibilityServiceEnabled(): Boolean {
+        val enabledServices = Settings.Secure.getString(
+            contentResolver,
+            Settings.Secure.ENABLED_ACCESSIBILITY_SERVICES
+        ) ?: return false
+        return enabledServices.contains(packageName)
     }
 }

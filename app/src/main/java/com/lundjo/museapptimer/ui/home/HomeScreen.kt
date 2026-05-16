@@ -61,11 +61,6 @@ fun HomeScreen(
     onScheduleClick: () -> Unit,
     onSettingsClick: () -> Unit
 ) {
-    val context = LocalContext.current
-    val isServiceEnabled = remember {
-        isAccessibilityServiceEnabled(context)
-    }
-
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -74,26 +69,6 @@ fun HomeScreen(
             .padding(16.dp),
         verticalArrangement = Arrangement.Center
     ) {
-        if (!isServiceEnabled) {
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .clip(RoundedCornerShape(16.dp))
-                    .background(MaterialTheme.colorScheme.surface)
-                    .clickable {
-                        val intent = Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS)
-                        context.startActivity(intent)
-                    }
-                    .padding(16.dp)
-            ) {
-                Text(
-                    text = "Tap to enable accessibility service",
-                    color = MaterialTheme.colorScheme.onSurface
-                )
-            }
-            Spacer(modifier = Modifier.height(16.dp))
-        }
-
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.spacedBy(16.dp)
@@ -125,12 +100,4 @@ fun HomeScreen(
                 .clickable { onSettingsClick() }
         )
     }
-}
-
-private fun isAccessibilityServiceEnabled(context: Context): Boolean {
-    val enabledServices = Settings.Secure.getString(
-        context.contentResolver,
-        Settings.Secure.ENABLED_ACCESSIBILITY_SERVICES
-    ) ?: return false
-    return enabledServices.contains(context.packageName)
 }
