@@ -31,6 +31,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import android.provider.Settings
+import androidx.compose.material.icons.outlined.Info
 import androidx.compose.material3.Text
 
 
@@ -59,7 +60,8 @@ private fun MenuCard(
 fun HomeScreen(
     onBundlesClick: () -> Unit,
     onScheduleClick: () -> Unit,
-    onSettingsClick: () -> Unit
+    onSettingsClick: () -> Unit,
+    onAboutClick: () -> Unit
 ) {
     Column(
         modifier = Modifier
@@ -69,6 +71,18 @@ fun HomeScreen(
             .padding(16.dp),
         verticalArrangement = Arrangement.Center
     ) {
+        Box(modifier = Modifier.fillMaxWidth()) {
+            Icon(
+                imageVector = Icons.Outlined.Info,
+                contentDescription = "About",
+                tint = MaterialTheme.colorScheme.onSurface,
+                modifier = Modifier
+                    .align(Alignment.TopEnd)
+                    .clickable { onAboutClick() }
+                    .size(24.dp)
+            )
+        }
+        Spacer(modifier = Modifier.height(24.dp))
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.spacedBy(16.dp)

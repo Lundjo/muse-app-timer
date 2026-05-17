@@ -14,6 +14,7 @@ import com.lundjo.museapptimer.ui.schedule.TimeAndBundlesScreen
 import com.lundjo.museapptimer.ui.schedule.TimeAndBundlesViewModel
 import com.lundjo.museapptimer.ui.settings.SettingsScreen
 import androidx.compose.ui.platform.LocalContext
+import com.lundjo.museapptimer.ui.home.AboutScreen
 import com.lundjo.museapptimer.ui.schedule.BundleDetailScreen
 import com.lundjo.museapptimer.ui.settings.SettingsViewModel
 
@@ -31,6 +32,7 @@ fun AppNavigation() {
                 onBundlesClick = { navController.navigate("createBundle") },
                 onScheduleClick = { navController.navigate("schedule") },
                 onSettingsClick = { navController.navigate("settings") },
+                onAboutClick = { navController.navigate("about") }
             )
         }
         composable("createBundle") {
@@ -56,6 +58,9 @@ fun AppNavigation() {
                 viewModel = viewModel,
                 onBack = { navController.popBackStack() }
             )
+        }
+        composable("about") {
+            AboutScreen()
         }
     }
 }
