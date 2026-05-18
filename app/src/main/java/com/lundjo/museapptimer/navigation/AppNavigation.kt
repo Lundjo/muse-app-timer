@@ -1,6 +1,8 @@
 package com.lundjo.museapptimer.navigation
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -25,6 +27,9 @@ fun AppNavigation() {
     val context = LocalContext.current
     val app = context.applicationContext as MuseApp
     val factory = ViewModelFactory(app.repository, app.settingsDataStore)
+    val settingsViewModel: SettingsViewModel = viewModel(factory = factory)
+    val editingHour by settingsViewModel.editingHour.collectAsState()
+    val isHourSet = editingHour != -1
 
     NavHost(navController = navController, startDestination = "home") {
         composable("home") {
@@ -32,7 +37,8 @@ fun AppNavigation() {
                 onBundlesClick = { navController.navigate("createBundle") },
                 onScheduleClick = { navController.navigate("schedule") },
                 onSettingsClick = { navController.navigate("settings") },
-                onAboutClick = { navController.navigate("about") }
+                onAboutClick = { navController.navigate("about") },
+                isHourSet = isHourSet
             )
         }
         composable("createBundle") {

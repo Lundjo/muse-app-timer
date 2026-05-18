@@ -17,7 +17,7 @@ class SettingsDataStore(private val context: Context) {
 
     val editingHour: Flow<Int> = context.dataStore.data
         .map { preferences ->
-            preferences[EDITING_HOUR_KEY] ?: 19
+            preferences[EDITING_HOUR_KEY] ?: -1
         }
 
     suspend fun saveEditingHour(hour: Int) {

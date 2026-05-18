@@ -32,6 +32,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import android.provider.Settings
 import androidx.compose.material.icons.outlined.Info
+import androidx.compose.material.icons.outlined.Lock
 import androidx.compose.material3.Text
 
 
@@ -39,7 +40,8 @@ import androidx.compose.material3.Text
 private fun MenuCard(
     icon: ImageVector,
     contentDescription: String,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    isLocked: Boolean
 ) {
     Box(
         modifier = modifier
@@ -53,6 +55,17 @@ private fun MenuCard(
             tint = MaterialTheme.colorScheme.onSurface,
             modifier = Modifier.size(36.dp)
         )
+        if (isLocked) {
+            Icon(
+                imageVector = Icons.Outlined.Lock,
+                contentDescription = "Locked",
+                tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                modifier = Modifier
+                    .align(Alignment.TopEnd)
+                    .padding(8.dp)
+                    .size(16.dp)
+            )
+        }
     }
 }
 
@@ -61,7 +74,8 @@ fun HomeScreen(
     onBundlesClick: () -> Unit,
     onScheduleClick: () -> Unit,
     onSettingsClick: () -> Unit,
-    onAboutClick: () -> Unit
+    onAboutClick: () -> Unit,
+    isHourSet: Boolean
 ) {
     Column(
         modifier = Modifier
@@ -93,7 +107,11 @@ fun HomeScreen(
                 modifier = Modifier
                     .weight(1f)
                     .height(160.dp)
-                    .clickable { onBundlesClick() }
+                    .then(
+                        if (isHourSet) Modifier.clickable { onBundlesClick() }
+                        else Modifier
+                    ),
+                isLocked = !isHourSet
             )
             MenuCard(
                 icon = Icons.Outlined.AccessTime,
@@ -101,7 +119,11 @@ fun HomeScreen(
                 modifier = Modifier
                     .weight(1f)
                     .height(160.dp)
-                    .clickable { onScheduleClick() }
+                    .then(
+                        if (isHourSet) Modifier.clickable { onScheduleClick() }
+                        else Modifier
+                    ),
+                isLocked = !isHourSet
             )
         }
         Spacer(modifier = Modifier.height(16.dp))
@@ -111,7 +133,8 @@ fun HomeScreen(
             modifier = Modifier
                 .fillMaxWidth()
                 .height(180.dp)
-                .clickable { onSettingsClick() }
+                .clickable { onSettingsClick() },
+            isLocked = false
         )
     }
 }
