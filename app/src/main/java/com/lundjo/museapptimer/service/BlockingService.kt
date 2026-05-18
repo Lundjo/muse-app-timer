@@ -32,6 +32,7 @@ class BlockingService : AccessibilityService() {
     private val overlayLifecycleOwner = OverlayLifecycleOwner()
     private val windowManager get() = getSystemService(WINDOW_SERVICE) as android.view.WindowManager
     private var overlayView: android.view.View? = null
+    private var currentForegroundPackage = ""
 
     override fun onServiceConnected() {
         val info = AccessibilityServiceInfo()
@@ -49,10 +50,16 @@ class BlockingService : AccessibilityService() {
         if (packageName == this.packageName) return
         if (packageName == "com.lundjo.museapptimer") return
         if (!hasLauncherIntent(packageName)) return
+        if (packageName == "com.android.settings") {
+            currentForegroundPackage = packageName
+            return
+        }
         if (!isAppInForeground(packageName)) {
             timedApps.remove(packageName)
             return
         }
+        if (packageName == currentForegroundPackage) return
+        currentForegroundPackage = packageName
 
         scope.launch {
             val app = applicationContext as MuseApp
@@ -110,7 +117,7 @@ class BlockingService : AccessibilityService() {
         museApp.isTimerShowing = true
         timedApps.add(packageName)
 
-        val timerDuration = listOf(1, 2).random()
+        val timerDuration = listOf(20,40, 60).random()
 
         scope.launch(Dispatchers.Main) {
             val params = android.view.WindowManager.LayoutParams(
