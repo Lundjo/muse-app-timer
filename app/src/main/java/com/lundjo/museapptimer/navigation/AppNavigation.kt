@@ -29,7 +29,6 @@ fun AppNavigation() {
     val factory = ViewModelFactory(app.repository, app.settingsDataStore)
     val settingsViewModel: SettingsViewModel = viewModel(factory = factory)
     val editingHour by settingsViewModel.editingHour.collectAsState()
-    val isHourSet = editingHour != -1
 
     NavHost(navController = navController, startDestination = "home") {
         composable("home") {
@@ -38,7 +37,7 @@ fun AppNavigation() {
                 onScheduleClick = { navController.navigate("schedule") },
                 onSettingsClick = { navController.navigate("settings") },
                 onAboutClick = { navController.navigate("about") },
-                isHourSet = isHourSet
+                isHourSet = isEditingHourActive(editingHour)
             )
         }
         composable("createBundle") {
@@ -69,4 +68,10 @@ fun AppNavigation() {
             AboutScreen()
         }
     }
+}
+
+fun isEditingHourActive(editingHour: Int): Boolean {
+    if (editingHour == -1) return false
+    val currentHour = java.time.LocalTime.now().hour
+    return currentHour == editingHour
 }

@@ -1,21 +1,27 @@
 package com.lundjo.museapptimer.ui.settings
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.Lock
 import androidx.compose.material3.Button
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExposedDropdownMenuAnchorType
 import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.ExposedDropdownMenuDefaults
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
@@ -25,6 +31,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
@@ -33,8 +40,11 @@ import androidx.compose.ui.unit.dp
 @OptIn(ExperimentalMaterial3Api::class)
 fun SettingsScreen(viewModel: SettingsViewModel) {
     val editingHour by viewModel.editingHour.collectAsState()
-    var selectedHour by remember(editingHour) { mutableStateOf("%02d:00".format(editingHour)) }
+    var selectedHour by remember(editingHour) {
+        mutableStateOf(if (editingHour == -1) "19:00" else "%02d:00".format(editingHour))
+    }
     var expanded by remember { mutableStateOf(false) }
+    val isEditable = editingHour == -1 || java.time.LocalTime.now().hour == editingHour
 
     Column(
         modifier = Modifier
@@ -57,11 +67,25 @@ fun SettingsScreen(viewModel: SettingsViewModel) {
                 .background(MaterialTheme.colorScheme.surface)
                 .padding(16.dp)
         ) {
-            Text(
-                text = "Settings Access",
-                style = MaterialTheme.typography.titleLarge,
-                color = MaterialTheme.colorScheme.onSurface
-            )
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    text = "Settings Access",
+                    style = MaterialTheme.typography.titleLarge,
+                    color = MaterialTheme.colorScheme.onSurface
+                )
+                if (!isEditable) {
+                    Icon(
+                        imageVector = Icons.Outlined.Lock,
+                        contentDescription = "Locked",
+                        tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                        modifier = Modifier.size(20.dp)
+                    )
+                }
+            }
             Spacer(modifier = Modifier.height(8.dp))
             Text(
                 text = "Choose one hour per day when you can modify app bundles and blocking schedules.",
@@ -76,8 +100,8 @@ fun SettingsScreen(viewModel: SettingsViewModel) {
             )
             Spacer(modifier = Modifier.height(8.dp))
             ExposedDropdownMenuBox(
-                expanded = expanded,
-                onExpandedChange = { expanded = it }
+                expanded = if (isEditable) expanded else false,
+                onExpandedChange = { if (isEditable) expanded = it }
             ) {
                 OutlinedTextField(
                     value = selectedHour,
@@ -112,7 +136,8 @@ fun SettingsScreen(viewModel: SettingsViewModel) {
                 viewModel.saveEditingHour(hour)
             },
             modifier = Modifier.fillMaxWidth(),
-            shape = RoundedCornerShape(16.dp)
+            shape = RoundedCornerShape(16.dp),
+            enabled = isEditable
         ) {
             Text("Save Settings")
         }

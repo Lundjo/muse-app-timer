@@ -43,7 +43,7 @@ fun AboutScreen() {
         Spacer(modifier = Modifier.height(12.dp))
         InfoCard(
             title = "How to use",
-            content = "1. Create a Bundle\nTap the grid icon to select apps you want to block together.\n\n2. Set Schedule\nTap the clock icon to view your bundles and set blocking times.\n\n3. Configure Settings Hour\nChoose one hour per day when you can modify your blocking schedules."
+            content = "1. Create a Bundle\nTap the grid icon to select apps you want to block together.\n\n2. Set Schedule\nTap the clock icon to view your bundles and set blocking times.\n\n3. Configure Settings Hour\nChoose one hour per day when you can modify your blocking schedules. This is also the first step you will have to take in order to use other functions."
         )
         Spacer(modifier = Modifier.height(12.dp))
         InfoCard(
