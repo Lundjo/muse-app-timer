@@ -1,6 +1,5 @@
 package com.lundjo.museapptimer.ui.schedule
 
-import android.R
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.lundjo.museapptimer.data.model.App

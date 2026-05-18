@@ -33,10 +33,10 @@ fun AppNavigation() {
     NavHost(navController = navController, startDestination = "home") {
         composable("home") {
             HomeScreen(
-                onBundlesClick = { navController.navigate("createBundle") },
-                onScheduleClick = { navController.navigate("schedule") },
-                onSettingsClick = { navController.navigate("settings") },
-                onAboutClick = { navController.navigate("about") },
+                onBundlesClick = { navController.navigate("createBundle") { launchSingleTop = true } },
+                onScheduleClick = { navController.navigate("schedule") { launchSingleTop = true } },
+                onSettingsClick = { navController.navigate("settings") { launchSingleTop = true } },
+                onAboutClick = { navController.navigate("about") { launchSingleTop = true } },
                 isHourSet = isEditingHourActive(editingHour)
             )
         }
