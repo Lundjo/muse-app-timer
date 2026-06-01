@@ -49,16 +49,24 @@ class BlockingService : AccessibilityService() {
         val packageName = event.packageName?.toString() ?: return
         if (packageName == this.packageName) return
         if (packageName == "com.lundjo.museapptimer") return
+
+        // Home screen or launcher — user left the app, reset so next launch shows timer
+        if (isLauncher(packageName)) {
+            timedApps.remove(currentForegroundPackage)
+            currentForegroundPackage = ""
+            return
+        }
+
         if (!hasLauncherIntent(packageName)) return
         if (packageName == "com.android.settings") {
+            timedApps.remove(currentForegroundPackage)
             currentForegroundPackage = packageName
             return
         }
-        if (!isAppInForeground(packageName)) {
-            timedApps.remove(packageName)
-            return
-        }
         if (packageName == currentForegroundPackage) return
+
+        // User left the previous app — remove it so its next launch triggers a timer
+        timedApps.remove(currentForegroundPackage)
         currentForegroundPackage = packageName
 
         scope.launch {
@@ -152,25 +160,6 @@ class BlockingService : AccessibilityService() {
         museApp.isTimerShowing = false
     }
 
-    private fun isAppInForeground(packageName: String): Boolean {
-        val appOps = getSystemService(APP_OPS_SERVICE) as android.app.AppOpsManager
-        val mode = appOps.checkOpNoThrow(
-            android.app.AppOpsManager.OPSTR_GET_USAGE_STATS,
-            android.os.Process.myUid(),
-            this.packageName
-        )
-        if (mode != android.app.AppOpsManager.MODE_ALLOWED) return false
-
-        val usageStatsManager = getSystemService(USAGE_STATS_SERVICE) as android.app.usage.UsageStatsManager
-        val time = System.currentTimeMillis()
-        val stats = usageStatsManager.queryUsageStats(
-            android.app.usage.UsageStatsManager.INTERVAL_DAILY,
-            time - 5000,
-            time
-        )
-        return stats?.maxByOrNull { it.lastTimeUsed }?.packageName == packageName
-    }
-
     @androidx.compose.runtime.Composable
     private fun TimerOverlay(duration: Int, onFinished: () -> Unit) {
         var secondsLeft by androidx.compose.runtime.remember {
@@ -205,6 +194,12 @@ class BlockingService : AccessibilityService() {
                 )
             }
         }
+    }
+
+    private fun isLauncher(packageName: String): Boolean {
+        val intent = Intent(Intent.ACTION_MAIN).addCategory(Intent.CATEGORY_HOME)
+        val pm = applicationContext.packageManager
+        return pm.queryIntentActivities(intent, 0).any { it.activityInfo.packageName == packageName }
     }
 
     private fun hasLauncherIntent(packageName: String): Boolean {
